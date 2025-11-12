@@ -492,47 +492,50 @@ export default function App() {
 
   // Send SMS (unchanged)
   const handleSendSMS = async () => {
-    if (!/^[6-9]\d{9}$/.test(phone)) {
-      alert("❌ Enter a valid 10-digit Indian number");
-      return;
+  if (!/^[6-9]\d{9}$/.test(phone)) {
+    alert("❌ Enter a valid 10-digit Indian number");
+    return;
+  }
+
+  const cropNames =
+    location.isValid && suitableCrops.length
+      ? suitableCrops.join(", ")
+      : "No data available";
+  const fertData =
+    location.isValid && fertilizerInfo.length
+      ? fertilizerInfo
+          .map((f) => `${f.crop}: ${f.fertilizers.join(", ")}`)
+          .join(" | ")
+      : "No fertilizer info available";
+
+  // ✅ Always define a message, even if data missing
+  const cropInfo = `🌾 AgriSense (${location.name})\nCrops: ${cropNames}\nFertilizers: ${fertData}`;
+
+  setSending(true);
+  try {
+    const res = await fetch("https://agrisense-17.onrender.com/api/send-sms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, cropInfo }),
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      alert("✅ SMS sent successfully!");
+      setShowSmsCard(false);
+      setPhone("");
+      setSmsMode(null);
+    } else {
+      alert("❌ " + (result.error || "Failed to send SMS"));
     }
+  } catch (err) {
+    console.error(err);
+    alert("❌ Server error while sending SMS");
+  } finally {
+    setSending(false);
+  }
+};
 
-    // if location invalid -> show N/A message instead of sending crop data
-    if (!location.isValid) {
-      alert("⚠️ Location is not a farming area. SMS will contain N/A data.");
-    }
-
-    const cropNames = location.isValid && suitableCrops.length ? suitableCrops.join(", ") : "N/A";
-    const fertData =
-      location.isValid && fertilizerInfo.length
-        ? fertilizerInfo.map((f) => `${f.crop}: ${f.fertilizers.join(", ")}`).join(" | ")
-        : "N/A";
-
-    const cropInfo = `🌾 AgriSense (${location.name})\nCrops: ${cropNames}\nFertilizers: ${fertData}`;
-
-    setSending(true);
-    try {
-      const res = await fetch("https://agrisense-17.onrender.com/api/send-sms", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, cropInfo }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        alert("✅ SMS sent successfully!");
-        setShowSmsCard(false);
-        setPhone("");
-        setSmsMode(null);
-      } else {
-        alert("❌ " + (result.error || "Failed to send SMS"));
-      }
-    } catch (err) {
-      console.error(err);
-      alert("❌ Server error while sending SMS");
-    } finally {
-      setSending(false);
-    }
-  };
 
   if (!authUser) {
     return (
