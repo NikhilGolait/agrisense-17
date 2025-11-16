@@ -1,4 +1,3 @@
-// src/components/Login.js
 import React, { useState } from "react";
 import axios from "axios";
 import ResetPassword from "./ResetPassword";
@@ -14,9 +13,18 @@ export default function Login({ onSignupClick, onLoginSuccess }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
+    setLoading(true);
+    
     try {
-      setLoading(true);
-      const res = await axios.post("https://agrisense-17.onrender.com/api/login", { phone, password });
+      console.log("🔄 Sending login request...", { phone, password });
+      
+      const res = await axios.post("https://agrisense-17.onrender.com/api/login", { 
+        phone, 
+        password 
+      });
+      
+      console.log("✅ Login response:", res.data);
+      
       if (res.data.success) {
         setMessage("✅ Login successful");
         const user = res.data.user;
@@ -25,6 +33,8 @@ export default function Login({ onSignupClick, onLoginSuccess }) {
         setMessage(res.data.error || "Login failed");
       }
     } catch (err) {
+      console.error("❌ Login error details:", err);
+      console.error("❌ Response data:", err.response?.data);
       setMessage(err.response?.data?.error || "Server error during login");
     } finally {
       setLoading(false);
@@ -45,9 +55,23 @@ export default function Login({ onSignupClick, onLoginSuccess }) {
         {message && <p className="auth-message">{message}</p>}
 
         <form onSubmit={handleLogin} className="auth-form">
-          <input type="tel" placeholder="Mobile number" value={phone} onChange={(e)=>setPhone(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
-          <button type="submit" className="auth-btn" disabled={loading}>{loading?"Checking...":"Login"}</button>
+          <input 
+            type="tel" 
+            placeholder="Mobile number" 
+            value={phone} 
+            onChange={(e) => setPhone(e.target.value)} 
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+          />
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading ? "Checking..." : "Login"}
+          </button>
         </form>
 
         <p className="auth-switch">
@@ -56,7 +80,12 @@ export default function Login({ onSignupClick, onLoginSuccess }) {
           </span>
         </p>
 
-        <p className="auth-switch">Don't have an account? <span onClick={onSignupClick} className="auth-link">Sign Up</span></p>
+        <p className="auth-switch">
+          Don't have an account?{" "}
+          <span onClick={onSignupClick} className="auth-link">
+            Sign Up
+          </span>
+        </p>
       </div>
     </div>
   );

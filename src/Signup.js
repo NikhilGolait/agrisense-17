@@ -1,4 +1,3 @@
-// src/components/Signup.js
 import React, { useState } from "react";
 import axios from "axios";
 import "./Auth.css";
@@ -13,6 +12,7 @@ export default function Signup({ onLoginClick }) {
   const handleSignup = async (e) => {
     e.preventDefault();
     setMessage("");
+    
     if (!name.trim() || !/^[6-9]\d{9}$/.test(phone) || password.length < 4) {
       setMessage("Please enter valid name, 10-digit phone and password (min 4 chars)");
       return;
@@ -20,11 +20,16 @@ export default function Signup({ onLoginClick }) {
 
     try {
       setLoading(true);
+      console.log("🔄 Sending signup request...", { name, phone, password });
+      
       const res = await axios.post("https://agrisense-17.onrender.com/api/signup", {
         name,
         phone,
         password,
       });
+      
+      console.log("✅ Signup response:", res.data);
+      
       if (res.data.success) {
         setMessage("✅ Signup successful — please login.");
         setTimeout(() => onLoginClick && onLoginClick(), 900);
@@ -32,6 +37,8 @@ export default function Signup({ onLoginClick }) {
         setMessage(res.data.error || "Signup failed");
       }
     } catch (err) {
+      console.error("❌ Signup error details:", err);
+      console.error("❌ Response data:", err.response?.data);
       setMessage(err.response?.data?.error || "Server error during signup");
     } finally {
       setLoading(false);
@@ -48,13 +55,38 @@ export default function Signup({ onLoginClick }) {
         {message && <p className="auth-message">{message}</p>}
 
         <form onSubmit={handleSignup} className="auth-form">
-          <input type="text" placeholder="Full name" value={name} onChange={(e)=>setName(e.target.value)} required />
-          <input type="tel" placeholder="Mobile number" value={phone} onChange={(e)=>setPhone(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
-          <button type="submit" className="auth-btn" disabled={loading}>{loading?"Creating...":"Sign up"}</button>
+          <input 
+            type="text" 
+            placeholder="Full name" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            required 
+          />
+          <input 
+            type="tel" 
+            placeholder="Mobile number" 
+            value={phone} 
+            onChange={(e) => setPhone(e.target.value)} 
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+          />
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading ? "Creating..." : "Sign up"}
+          </button>
         </form>
 
-        <p className="auth-switch">Already have an account? <span onClick={onLoginClick} className="auth-link">Login</span></p>
+        <p className="auth-switch">
+          Already have an account?{" "}
+          <span onClick={onLoginClick} className="auth-link">
+            Login
+          </span>
+        </p>
       </div>
     </div>
   );
