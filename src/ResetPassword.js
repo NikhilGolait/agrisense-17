@@ -30,7 +30,7 @@ export default function ResetPassword({ onBackClick }) {
 
     try {
       setLoading(true);
-      const res = await axios.post("https://agrisense-17.onrender.com/api/reset-password", {
+      const res = await axios.post("https://agrisense-17b.onrender.com/api/reset-password", {
         phone,
         newPassword,
       });

@@ -22,7 +22,7 @@ export default function Signup({ onLoginClick }) {
       setLoading(true);
       console.log("🔄 Sending signup request...", { name, phone, password });
       
-      const res = await axios.post("https://agrisense-17.onrender.com/api/signup", {
+      const res = await axios.post("https://agrisense-17b.onrender.com/api/signup", {
         name,
         phone,
         password,

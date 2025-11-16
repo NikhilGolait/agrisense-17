@@ -879,13 +879,9 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [suitableCrops, setSuitableCrops] = useState([]);
   const [loading, setLoading] = useState(false);
-<<<<<<< HEAD
-
-=======
   const [detectedDistrict, setDetectedDistrict] = useState(null);
 
   // --- State needed for UI ---
->>>>>>> a8ffef8 (code updated)
   const [showSmsCard, setShowSmsCard] = useState(false);
   const [phone, setPhone] = useState("");
   const [sending, setSending] = useState(false);
@@ -1140,52 +1136,11 @@ export default function App() {
 
   // Send SMS
   const handleSendSMS = async () => {
-  if (!/^[6-9]\d{9}$/.test(phone)) {
-    alert("❌ Enter a valid 10-digit Indian number");
-    return;
-  }
-
-  const cropNames =
-    location.isValid && suitableCrops.length
-      ? suitableCrops.join(", ")
-      : "No data available";
-  const fertData =
-    location.isValid && fertilizerInfo.length
-      ? fertilizerInfo
-          .map((f) => `${f.crop}: ${f.fertilizers.join(", ")}`)
-          .join(" | ")
-      : "No fertilizer info available";
-
-  // ✅ Always define a message, even if data missing
-  const cropInfo = `🌾 AgriSense (${location.name})\nCrops: ${cropNames}\nFertilizers: ${fertData}`;
-
-  setSending(true);
-  try {
-    const res = await fetch("https://agrisense-17.onrender.com/api/send-sms", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, cropInfo }),
-    });
-
-    const result = await res.json();
-    if (result.success) {
-      alert("✅ SMS sent successfully!");
-      setShowSmsCard(false);
-      setPhone("");
-      setSmsMode(null);
-    } else {
-      alert("❌ " + (result.error || "Failed to send SMS"));
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+      alert("❌ Enter a valid 10-digit Indian number");
+      return;
     }
-  } catch (err) {
-    console.error(err);
-    alert("❌ Server error while sending SMS");
-  } finally {
-    setSending(false);
-  }
-};
 
-<<<<<<< HEAD
-=======
     const cropNames = suitableCrops.length
       ? suitableCrops.map((crop) => crop.name).join(", ")
       : "N/A";
@@ -1195,7 +1150,7 @@ export default function App() {
     setSending(true);
     try {
       const res = await fetch(
-        "https://agrisense-17.onrender.com/api/send-sms",
+        "https://agrisense-17b.onrender.com/api/send-sms",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -1217,7 +1172,6 @@ export default function App() {
       setSending(false);
     }
   };
->>>>>>> a8ffef8 (code updated)
 
   if (!authUser) {
     return (
@@ -1429,20 +1383,6 @@ export default function App() {
           </div>
         </header>
 
-<<<<<<< HEAD
-        {/* Loading Indicator */}
-        {loading && (
-          <div style={{
-            textAlign: "center",
-            padding: "20px",
-            background: "#f0f8ff",
-            borderRadius: "8px",
-            margin: "15px 0",
-            fontSize: "16px",
-            color: "#1976d2"
-          }}>
-            ⏳ Loading weather data...
-=======
         {/* Enhanced Location Info */}
         <div className="location-info">
           <div className="location-badge">
@@ -1477,7 +1417,6 @@ export default function App() {
           <div className="loading-indicator">
             <div className="loading-spinner"></div>
             Loading weather data and location analysis...
->>>>>>> a8ffef8 (code updated)
           </div>
         )}
 
